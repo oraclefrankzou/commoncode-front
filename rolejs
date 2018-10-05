@@ -1,0 +1,167 @@
+$(function() {
+
+    /*
+    * 功能：得到所有父菜单和子菜单元素，并通过jquery加载
+    * */
+    function getMenu(){
+        $.ajax({
+            url: "/getMenu",
+            dataType:"json",
+            success: function (data) {
+                for (var i=0;i<data.length;i++){
+                  $("#sidebarmenu").append(
+
+                         "<li class=\"treeview qq\"   value=\"aa\" ' > \
+                             <a href=\"#\" id='cc'> <i class=\"fa fa-table\"></i> <span class=\"rootmenuspan\" >"+data[i][1]+"</span> \
+                            <span class=\"pull-right-container\"> <i class=\"fa fa-angle-left pull-right\"></i> </span> </a> \
+                            <ul class=\"treeview-menu \"  id=\""+data[i][0]+"\"> \
+                             </ul> </li> "
+                  )}
+
+                 /*
+                 * 为每个父菜单元素绑定一个click事件，并根据父菜单的id加载子菜单
+                 * */
+                 $(".treeview").click(function(){
+                       var menuid=$(this).find(".treeview-menu").attr("id");
+
+                       /*清除子元素*/
+                       $obj=$("#"+menuid+"");
+                       $obj.empty();
+                       $.ajax({
+                           url: "/getSonMenu/"+menuid.replace(" ",""),
+                           dataType:"json",
+                           success:function(data){
+                               for (var i=0;i<data.length;i++){
+                                   $obj.append("<li><a id=\"lia"+data[i][2]+"\" href=\""+data[i][2]+"\"><i class=\"fa fa-circle-o\"></i>" +data[i][1]+"</a></li>")
+                               }
+
+                           },
+
+                       })
+
+
+
+                });
+
+            }},
+         )};
+
+     /*
+     *  执行
+     * */
+    getMenu();
+
+    /*
+    * 功能： 实现了用户锁定功能;
+    * */
+    $(".btn-danger").click(function(data){
+         var id=$(this).attr("value");
+         $.ajax({
+             url: "/user_lock/"+id.replace(" ",""),
+             dataType:"json",
+             success:function (data) {
+                 location.reload();
+             }
+
+         })
+    })
+
+      /*
+       * 功能： 实现了用户解锁功能;
+       * */
+
+    $(".btn-success").click(function(data){
+         var id=$(this).attr("value");
+         var result;
+
+         $.ajax({
+             url: "/user_unlock/"+id.replace(" ",""),
+             dataType:"json",
+             success:function (data) {
+                result=data;
+
+             }
+
+         });
+         /*
+         * 每1秒去获取ajax结果，如果返回结果为ok,表示操作成功，
+         * */
+         unlockresult=setInterval(
+             function(){
+                 if (result)
+                 {
+
+                  $("#myModal").modal('show');
+                  location.reload();
+                  clearInterval(unlockresult);
+                 }
+             },1000
+         );
+
+    })
+
+     $(".btn-warning").click(function(data){
+         var id=$(this).attr("value");
+         var result;
+
+         $.ajax({
+             url: "/logoutid/"+id.replace(" ",""),
+             dataType:"json",
+             success:function (data) {
+                result=data;
+
+             }
+
+         });
+         /*
+         * 每1秒去获取ajax结果，如果返回结果为ok,表示操作成功，
+         * */
+         unlockresult=setInterval(
+             function(){
+                 if (result)
+                 {
+
+                  $("#myModal").modal('show');
+                  clearInterval(unlockresult);
+                 }
+             },1000
+         );
+
+    })
+
+
+     $(".btn-info").click(function(data){
+         var id=$(this).attr("value");
+         var username=$(this).attr("username");
+         var result;
+
+         $.ajax({
+             url: "/logoutid/"+id.replace(" ",""),
+             dataType:"json",
+             success:function (data) {
+                result=data;
+
+             }
+
+         });
+
+                  $("#pwdModal").modal('show');
+                  $("#pwdModalLabel").html(username);
+
+
+    })
+
+     $(".btn-primary#roleadd").click(function(){
+         $("#roleaddModal").modal("show");
+
+     });
+
+
+});
+
+
+
+  function getSonMenu(obj) {
+        alert(obj.get);
+    };
+
