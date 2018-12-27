@@ -1,0 +1,89 @@
+ //基于Ext JS的密码登录框
+ 
+ Ext.onReady(function(){
+
+             Ext.QuickTips.init();
+             //定义登录处理函数
+             var loginFunc=function(){
+                  Ext.get("promptText").dom.innerHTML="<span style=''>&nbsp</span>";
+                 if (!loginForm.getForm().isValid()) {
+                 Ext.get("promptText").dom.innerHTML="<span style='color: red'>温馨提示:输入不合法</span>";
+                 console.log(Ext.get("forgetpassword"));
+                 return;
+                };
+             var username=loginForm.getForm().findField("username").getValue();
+             var password=loginForm.getForm().findField("password").getValue();
+             Ext.Ajax.request({
+                 method:"POST",
+                 url:"login",
+                 params:["username="+username+"&password="+password],
+                 success:function(response){
+                     window.location="main";
+
+                 },
+                 failure:function(response){
+
+                      var jsondata = Ext.decode(response.responseText);
+                      Ext.get("promptText").dom.innerHTML="<span style='color: red'>温馨提示:"+jsondata.msg+"</span>";
+
+                 }
+             });
+
+            }
+             //定义登录处理函数ends
+
+             //登录form
+             var loginForm=new Ext.form.FormPanel({
+                 anchorSize:"100%,100%",
+
+                 defaults:{
+                    xtype:"textfield",labelWidth:70, allowBlank:false
+                 },
+
+                 items:[
+                        {xtype:"tbtext",html:"<h2>平台</h2>",style:"margin-left:60px"},
+                        {xtype:"textfield",fieldLabel:"用户名",name:"username",style:"margin-left:24px;margin-top:40px",blankText:"用户名不能为空"},
+                        {xtype:"textfield",fieldLabel:"密&nbsp&nbsp&nbsp码",name:"password",inputType:"password",style:"margin-left:24px;margin-top:20px",blankText:"密码不能为空"},
+                        {xtype:"label",html:"<a href='javascript:void(0);' id='forgetpassworda'>忘记密码?</a>",style:"margin-left:200px;margin-top:20px",id:"forgetpassword"},
+                        {xtype:"tbtext",text:"<span>&nbsp</span>",style:"margin-left:24px;margin-top:10px",id:"promptText"},
+                        {xtype:"button",height:30,width:248,text:"登录",style:"margin-left:30px;margin-top:30px;margin-bottom:8px",handler:loginFunc}
+                 ],
+             });
+            ////登录form ends
+
+
+
+
+
+
+             var fs=new Ext.form.FieldSet({
+                 title:"",
+                 width:330,
+                 style:{background:'white'},
+                 items:[loginForm]
+             });
+
+
+             var panel=new Ext.panel.Panel({
+                 style:"margin-left:35%;margin-top:7%;background:'red'",
+                 bodyStyle:{background:'#F5F5F5'},
+                 items:[fs]
+             });
+
+             //主页面布局
+             var viewPort=new Ext.Viewport({
+                 layout:"fit",
+                  style:{background:'#F5F5F5'},
+                 items:[panel]
+             });
+
+             //忘记密码框
+             var forgetPassword=function(){
+                 Ext.Msg.alert("忘记密码","请联系相关人员!");
+
+            }
+            Ext.get('forgetpassworda').on('click',forgetPassword);
+           //忘记密码框ends
+
+ });
+
