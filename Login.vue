@@ -20,7 +20,7 @@
 
 
                    <el-form-item style="width:100%;" center>
-                       <el-button style="width:98%;" type="primary">登 &nbsp  &nbsp 录</el-button>
+                       <el-button style="width:100%;" type="primary">登 &nbsp  &nbsp 录</el-button>
                   </el-form-item>
 
              </el-form>
